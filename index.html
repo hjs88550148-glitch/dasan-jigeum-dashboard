@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>다산 지금지구 부동산 브리핑 | 덕자부동산</title>
+<meta name="description" content="남양주시 다산동 아파트 실거래와 입지 브리핑">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--ink:#142738;--muted:#526677;--brand:#086355;--line:#dce5e5;--paper:#fff;--back:#f2f6f5;--accent:#d6f2e5}
+*{box-sizing:border-box}body{margin:0;background:var(--back);color:var(--ink);font:15px/1.55 system-ui,'Malgun Gothic',sans-serif}
+a{color:var(--brand)}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #b06c1d;outline-offset:2px}
+header{background:#fff;border-bottom:1px solid var(--line)}.shell{max-width:1350px;margin:auto;padding:0 32px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:15px}.brand{display:flex;gap:12px;align-items:center}.brand svg{flex:none}.brand strong{display:block;font-size:20px;letter-spacing:-.06em}.brand span,.muted{font-size:13px;color:var(--muted)}.actions{display:flex;gap:12px;align-items:center}.actions a{font-weight:700;text-decoration:none;white-space:nowrap}
+.btn,select,input{border:1px solid #c7d6d6;border-radius:9px;padding:8px 12px;background:white;color:var(--ink)}.btn{font-weight:700}.primary,.active{background:var(--brand);color:white;border-color:var(--brand)}
+.hero{background:radial-gradient(ellipse at 90% 20%,#237868 0%,transparent 55%),linear-gradient(115deg,#133442,#12443d);color:white;position:relative;overflow:hidden}.hero .shell{position:relative;padding-block:36px 46px}.eyebrow{font-size:12px;letter-spacing:.18em;color:#a1e6d1;font-weight:800}.hero h1{margin:8px 0;font-size:clamp(28px,5vw,48px);letter-spacing:-.065em;line-height:1.2}.hero p{margin:0;color:#e1efed}.hero svg{position:absolute;right:6%;bottom:0;width:36%;height:100%;opacity:.21;pointer-events:none}
+main.shell{padding-block:20px 36px}.card{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:19px;min-width:0}.filters{display:flex;align-items:end;gap:12px;flex-wrap:wrap}.filters label,dialog label{display:grid;gap:4px;font-weight:700;font-size:13px}.tabs{display:flex;gap:5px;flex-wrap:wrap}.tabs .btn{font-size:13px;white-space:nowrap}.status{margin:9px 0 14px;color:var(--muted);min-height:24px}.status[data-error=true]{color:#9c321e}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}.metric{border-top:3px solid #65a797}.metric output{display:block;font-size:clamp(20px,3vw,29px);font-weight:800;letter-spacing:-.05em;margin:3px 0}.workspace{display:grid;grid-template-columns:1.15fr 1fr;gap:15px;align-items:start}.title{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:12px}h2,h3,p{margin:0}h2{font-size:21px;letter-spacing:-.045em}h3{font-size:15px}p+p{margin-top:4px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;text-align:left;font-size:13px}td,th{padding:10px 7px;border-bottom:1px solid #e9eeee;vertical-align:middle}th{background:#eef5f3;color:#3e575d;white-space:nowrap}td:last-child{white-space:nowrap}tr.selected{background:#def4eb}.rank{display:inline-grid;place-items:center;background:#e0f2ec;color:#07574b;border-radius:7px;min-width:26px;height:25px;font-weight:800}.name{border:0;background:none;color:var(--ink);padding:2px;text-align:left;font-weight:750}.name:hover{text-decoration:underline}.map{height:335px;border-radius:11px;background:#e7eeea;z-index:0}.pin{background:var(--brand);color:white;border:2px solid white;border-radius:50%;text-align:center;font-weight:800;line-height:26px;box-shadow:0 2px 6px #2348}.pin.focus{background:#b05321}.mapnote{margin-top:8px}.latest{margin-top:12px}.latest:empty{display:none}.latest strong{color:var(--brand)}.listing,.location{margin-top:16px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mini{background:#f3f8f6;border:1px solid #dce8e3;border-radius:11px;padding:13px;min-width:0}.mini p{margin-top:6px}.mini small{display:block;color:var(--muted)}.mini .name{font-size:15px}.tag{display:inline-block;border-radius:99px;background:#d7eee5;padding:2px 8px;font-size:11px;color:#085647;font-weight:800;margin-bottom:5px}.empty{padding:18px 8px;color:var(--muted)}footer{margin-top:20px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:13px}
+dialog{border:1px solid var(--line);border-radius:15px;width:min(94%,460px);color:var(--ink);padding:23px}dialog form{display:grid;gap:12px}dialog::backdrop{background:#18353ab0}
+@media(max-width:850px){.workspace{grid-template-columns:1fr}.grid4,.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.shell{padding-inline:14px}.head .actions a{display:none}.title{flex-wrap:wrap}.card{padding:13px}.hero svg{display:none}.map{height:280px}.filters{gap:8px}}
+@media print{@page{size:A4;margin:9mm}body{background:white;font-size:10pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}.shell{padding-inline:0}.hero .shell{padding-block:14px}.hero h1{font-size:25pt}.screen,.leaflet-control-zoom,dialog{display:none!important}.card{padding:9px;border-radius:5px}.workspace{grid-template-columns:1.1fr 1fr;gap:7px}.metrics,.grid4{grid-template-columns:repeat(4,1fr);gap:6px}.map{height:200px}.mini,.metric,tr{break-inside:avoid}.location,.listing{margin-top:8px}td,th{padding:4px}.table-wrap{overflow:visible}.name{font-size:9pt}.title{gap:4px}footer{font-size:8pt}}
+</style></head><body>
+<header><div class="shell head"><div class="brand">
+<svg width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="덕자부동산 로고"><rect width="48" height="48" rx="13" fill="#086355"/><path d="M8 23 24 10l16 13M13 24v11h22V24M20 35V23h8v12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 40q8-4 16 0t16 0" fill="none" stroke="#96e5c9" stroke-width="2"/></svg>
+<div><strong>덕자부동산</strong><span>지금지구 · 다산동 전문 공인중개사</span></div></div><div class="actions"><a href="tel:01047033012">Tel. 010-4703-3012</a><button class="btn screen" id="print">▤ 인쇄</button></div></div></header>
+<section class="hero"><svg viewBox="0 0 450 160" aria-hidden="true"><g stroke="#b0f8da" fill="none" stroke-width="2"><path d="M10 149h430M45 149V80h62v69M120 149V53h52v96m15 0V27h67v122m15 0V67h60v82m18 0V41h55v108"/><path d="M30 125q40-12 80 0t80 0t80 0t80 0t80 0M62 95h26m-26 12h26m50-38h20m-20 15h20m49-40h27m-27 17h27m-27 17h27m50 7h30m-30 16h30m49-44h22m-22 15h22"/></g></svg><div class="shell"><div class="eyebrow">NAMYANGJU · PROPERTY BRIEFING</div><h1>다산 지금지구 부동산 브리핑</h1><p>다산동 아파트 실거래와 단지별 생활권을 한눈에</p></div></section>
+<main class="shell">
+<form class="card filters screen" id="filters"><label>조회 지역<select id="area"><option value="all">다산동 전체</option><option value="jigeum">지금지구 · 주요 단지</option><option value="2">다산2동 · 확인 단지</option><option value="1">다산1동 · 확인 단지</option></select></label>
+<div class="tabs" aria-label="조회 주기"><button type="button" class="btn" data-span="7">주간</button><button type="button" class="btn active" data-span="month">월간</button></div>
+<label>시작일<input type="date" id="start" required min="2011-01-01"></label><label>종료일<input type="date" id="end" required min="2011-01-01"></label><button class="btn primary" type="submit">실거래 조회</button></form>
+<p class="status" id="status" role="status"></p>
+<section class="metrics" aria-label="시장 요약">
+<div class="card metric"><h3>신고 거래</h3><output id="count">—</output><div class="muted">계약일 기준 · 선택 유형</div></div>
+<div class="card metric"><h3>거래 단지</h3><output id="complexes">—</output><div class="muted">기간 내 신고 단지</div></div>
+<div class="card metric"><h3 id="medianTitle">실거래 중간값</h3><output id="median">—</output><div class="muted">전용면적 전체 합산</div></div>
+<div class="card metric"><h3>남양주시 매매가격지수</h3><output id="reb">—</output><div class="muted" id="rebnote">한국부동산원 · 월간</div></div>
+</section>
+<section class="workspace">
+<div class="card"><div class="title"><div><h2>아파트 Top 10</h2><p class="muted">신고 건수 순 · 동률은 최근 계약일 순</p></div><div class="tabs screen" aria-label="거래 유형"><button class="btn active" data-type="sale">매매</button><button class="btn" data-type="lease">전세</button><button class="btn" data-type="monthly">월세</button></div></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">순위</th><th scope="col">아파트</th><th scope="col">건수</th><th scope="col">기간 내 최근 거래</th></tr></thead><tbody id="rank"></tbody></table></div>
+</div>
+<div class="card"><div class="title"><div><h2 id="maptitle">Top 10 위치 지도</h2><p id="mapcaption" class="muted">단지를 선택하면 위치와 최근 거래가 표시됩니다</p></div><button type="button" id="reset" class="btn screen" hidden>전체 보기</button></div><div id="map" class="map" aria-label="다산동 아파트 위치 지도"></div><p id="mapnote" class="mapnote muted"></p><div id="latest" class="latest"></div></div>
+</section>
+<section class="card location" id="location"><div class="title"><div><h2>단지 입지 브리핑</h2><p class="muted" id="locationtitle">순위 또는 추천매물에서 단지를 선택하세요</p></div></div><div class="grid4" id="locationgrid"></div></section>
+<section class="card listing" id="listing"><div class="title"><div><h2>추천매물</h2><p class="muted">예시 4건 · 추가한 매물은 이 브라우저에 저장됩니다</p></div><button id="add" class="btn primary screen">＋ 추천매물 추가</button></div><div id="listings" class="grid4"></div></section>
+<footer>덕자부동산 · Tel. 010-4703-3012<br>출처 <a href="https://rt.molit.go.kr/" target="_blank" rel="noopener">국토교통부 실거래가 공개시스템</a> · <a href="https://www.reb.or.kr/r-one/" target="_blank" rel="noopener">한국부동산원 R-ONE</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a><br>최근 계약은 신고·정정에 따라 집계가 바뀔 수 있습니다. 행정동과 지금지구 필터는 확인 단지 목록을 사용하므로 전수 집계와 차이가 있을 수 있습니다.</footer></main>
+<dialog id="dialog"><form id="newListing"><h2>추천매물 추가</h2><label>아파트명<input id="newName" list="known" maxlength="80" required><datalist id="known"></datalist></label><label>거래 유형<select id="newType"><option value="sale">매매</option><option value="lease">전세</option><option value="monthly">월세</option></select></label><label>안내 가격<input id="newPrice" maxlength="45" required placeholder="예: 보증금 1억 / 월 150만"></label><label>메모<input id="newMemo" maxlength="100" placeholder="예: 전용 84㎡ · 남향"></label><div class="tabs"><button type="button" class="btn" id="cancel">취소</button><button class="btn primary" type="submit">저장</button></div></form></dialog>
+<script>const $=id=>document.getElementById(id);
+const types={sale:'매매',lease:'전세',monthly:'월세'};
+const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());
+const day=(date,delta)=>{const d=new Date(date+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+delta);return d.toISOString().slice(0,10)};
+const norm=s=>s.normalize('NFKC').toLowerCase().replace(/[\s·&()\-,]/g,'').replace(/아파트$/,'').replace(/금강(?=펜테리움)/,'').replace(/리버테라스1$/,'리버테라스i').replace(/리버테라스2$/,'리버테라스ii');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const n=x=>Number(x).toLocaleString('ko-KR');
+const won=x=>x>=10000 ? Math.floor(x/10000)+'억'+(x%10000?' '+n(x%10000)+'만':'') : n(x)+'만';
+const price=x=>x.rent ? won(x.amount)+' / 월 '+won(x.rent) : won(x.amount);
+const mapLink=q=>'https://map.naver.com/p/search/'+encodeURIComponent(q);
+const areaLabels={all:'다산동 전체',jigeum:'지금지구 주요 단지',1:'다산1동 확인 단지',2:'다산2동 확인 단지'};
+const jigeum=/퍼스트포레|퍼스트리버|펜테리움리버테라스|지금센트럴에일린|지금반도유보라|신도시자연푸르지오/;
+const first=/자이아이비플레이스|자이폴라리스|이편한세상자이|플루리움|자연앤e편한세상|자연e편한세상/;
+const second=/힐스테이트황금산|한화꿈에그린/;
+const matchArea=(x,a)=>a==='all'||(a==='jigeum'?jigeum.test(norm(x.name)):a==='2'?jigeum.test(norm(x.name))||second.test(norm(x.name)):first.test(norm(x.name)));
+const samples=[
+ {name:'다산신안인스빌퍼스트포레',type:'sale',price:'가격 협의',memo:'전용 84㎡ 타입 상담'},
+ {name:'다산신안인스빌퍼스트리버',type:'lease',price:'보증금 상담',memo:'입주 가능 일정 확인'},
+ {name:'다산펜테리움리버테라스Ⅰ',type:'monthly',price:'보증금·월세 협의',memo:'보증금 조정 문의'},
+ {name:'다산펜테리움리버테라스Ⅱ',type:'sale',price:'가격 협의',memo:'층·향별 매물 상담'}
+];
+let saved=[];
+try {saved=JSON.parse(localStorage.getItem('deokja-listings')||'[]');if(!Array.isArray(saved))saved=[];} catch {}
+let type='sale', data=[], top=[], selected=null, points=[], map, layer, query=0, selection=0;
+let placeState='불러오는 중';
+const coordinates=new Map();
+// Address coordinates for the four featured complexes, verified against Findby.
+const knownCoordinates={
+  '다산신안인스빌퍼스트포레':{lot:'6213',lat:37.6023797,lon:127.175803},
+  '다산신안인스빌퍼스트리버':{lot:'6251',lat:37.5954482,lon:127.1711326},
+  '다산펜테리움리버테라스i':{lot:'6215',lat:37.6011022,lon:127.1763893},
+  '다산펜테리움리버테라스ii':{lot:'6235',lat:37.5981301,lon:127.1713667}
+};
+function buttonGroup(selector,value,field) {
+  document.querySelectorAll(selector).forEach(b=>{const on=b.dataset[field]===value;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+}
+async function json(url) {
+  const r=await fetch(url);
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'데이터를 불러오지 못했습니다');
+  return j;
+}
+function dates(span) {
+  $('end').value=span==='7'?today:day(today.slice(0,7)+'-01',-1);
+  $('start').value=span==='7'?day(today,-6):$('end').value.slice(0,7)+'-01';
+  buttonGroup('[data-span]',span,'span');
+}
+function status(message,error=false) {$('status').textContent=message;$('status').dataset.error=error}
+function aggregate(rows) {
+  const groups=new Map();
+  for(const x of rows){
+    if(!groups.has(x.id))groups.set(x.id,{...x,count:0});
+    groups.get(x.id).count++;
+  }
+  return [...groups.values()].sort((a,b)=>b.count-a.count||b.date.localeCompare(a.date)||a.name.localeCompare(b.name,'ko'));
+}
+function drawRows(empty='선택 기간에 신고된 거래가 없습니다.') {
+  $('rank').innerHTML=top.map((x,i)=>'<tr class="'+(x.id===selected?.id?'selected':'')+'"><td><span class="rank">'+(i+1)+'</span></td><td><button type="button" class="name" data-rank="'+i+'">'+esc(x.name)+'</button><div class="muted">다산동 '+esc(x.lot)+'</div></td><td>'+x.count+'건</td><td><strong>'+esc(price(x))+'</strong><div class="muted">'+esc(x.date)+' · '+x.area+'㎡</div></td></tr>').join('')||'<tr><td colspan="4" class="empty">'+esc(empty)+'</td></tr>';
+}
+function filter() {
+  const a=$('area').value;
+  const rows=data.filter(x=>matchArea(x,a));
+  const groups=aggregate(rows);
+  top=groups.slice(0,10);
+  $('count').textContent=n(rows.length)+'건';
+  $('complexes').textContent=n(groups.length)+'곳';
+  $('medianTitle').textContent=type==='monthly'?'월세 중간값':type==='lease'?'전세보증금 중간값':'매매가 중간값';
+  const vals=rows.map(x=>type==='monthly'?x.rent:x.amount).sort((x,y)=>x-y);
+  const mid=(vals.length-1)/2;
+  $('median').textContent=vals.length?won((vals[Math.floor(mid)]+vals[Math.ceil(mid)])/2):'—';
+  status(areaLabels[a]+'  ·  '+$('start').value+' ~ '+$('end').value+'  ·  '+types[type]+'  ·  국토교통부 실거래');
+  $('known').innerHTML=[...new Set([...groups.map(x=>x.name),...samples.map(x=>x.name)])].map(x=>'<option value="'+esc(x)+'">').join('');
+  clearSelection();
+}
+async function load() {
+  if(!$('filters').reportValidity())return;
+  const token=++query;
+  data=[];top=[];
+  for(const id of ['count','complexes','median'])$(id).textContent='—';
+  clearSelection();
+  drawRows('신고 자료를 불러오는 중입니다.');
+  status('국토교통부 신고 자료 조회 중…');
+  try {
+    const params=new URLSearchParams({start:$('start').value,end:$('end').value,type});
+    const result=await json('/api/trades?'+params);
+    if(token!==query)return;
+    data=result.rows;
+    filter();
+  }catch(e){
+    if(token!==query)return;
+    drawRows('조회에 실패했습니다. 실거래 조회 버튼으로 다시 시도할 수 있습니다.');
+    status(e.message,true);
+  }
+}
+function resolve(x) {
+  const name=norm(x.name);
+  const known=Object.hasOwn(knownCoordinates,name)?knownCoordinates[name]:null;
+  if(known&&(!x.lot||x.lot===known.lot))return known;
+  const hits=points.filter(p=>p.kind==='apt'&&norm(p.name)===name);
+  if(hits.some(p=>Math.hypot(p.lat-hits[0].lat,p.lon-hits[0].lon)>.006))return null;
+  return hits[0]||coordinates.get(name);
+}
+async function locateVisible(){
+  const names=[...new Set((selected?[selected]:top).filter(x=>!resolve(x)&&!coordinates.has(norm(x.name))).map(x=>x.name))];
+  await Promise.all(names.map(async name=>{
+    const key=norm(name);
+    coordinates.set(key,null);
+    try {coordinates.set(key,await json('/api/geocode?'+new URLSearchParams({name})))}
+    catch {coordinates.delete(key)}
+  }));
+  if(names.length){drawMap();drawLocation()}
+}
+function drawMap() {
+  $('maptitle').textContent=selected?selected.name:'Top 10 위치 지도';
+  $('mapcaption').textContent=selected?'선택 단지 · 최근 6개월 신고 자료':'순위 번호를 누르면 단지 브리핑을 열 수 있습니다';
+  $('reset').hidden=!selected;
+  const items=(selected?[selected]:top).map((x,i)=>({x,i,p:resolve(x)}));
+  const missing=items.filter(v=>!v.p);
+  $('mapnote').innerHTML=missing.length?'지도 위치 '+(items.length-missing.length)+'/'+items.length+'곳 · 위치 검색 '+missing.map(v=>'<a href="'+mapLink('남양주 다산동 '+v.x.name)+'" target="_blank" rel="noopener">'+esc(v.x.name)+'</a>').join(' · '):items.length?'지도 위치 '+items.length+'곳 · OpenStreetMap / 주소 좌표':'다산동 주변 지도';
+  if(!map)return;
+  layer.clearLayers();
+  const bounds=[];
+  for(const {x,i,p} of items){
+    if(!p)continue;
+    const ll=[p.lat,p.lon];
+    bounds.push(ll);
+    L.marker(ll,{title:x.name,alt:x.name,icon:L.divIcon({className:'pin'+(selected?' focus':''),html:selected?'●':String(i+1),iconSize:[30,30],iconAnchor:[15,15]})}).addTo(layer).on('click',()=>choose(x));
+  }
+  if(bounds.length===1)map.setView(bounds[0],16);
+  else if(bounds.length>1)map.fitBounds(bounds,{padding:[34,34],maxZoom:15});
+  else map.setView([37.605,127.163],13);
+}
+function clearSelection(){
+  ++selection;selected=null;$('latest').innerHTML='';
+  drawRows();drawMap();drawLocation();
+  if(placeState!=='불러오는 중')locateVisible();
+}
+const categories=[
+ ['교통',[['KTX','상봉역 KTX',p=>p.kind==='rail'&&p.name.includes('상봉')],['전철','다산역 도농역',p=>p.kind==='rail'&&!/상봉/.test(p.name)],['버스','버스정류장',p=>p.kind==='bus']]],
+ ['학군',[['초등학교','초등학교',p=>p.kind==='school'&&p.name.includes('초등학교')],['중학교','중학교',p=>p.kind==='school'&&/중학교$/.test(p.name)],['고등학교','고등학교',p=>p.kind==='school'&&/고등학교$/.test(p.name)]]],
+ ['상권·생활',[['마트','마트',p=>p.kind==='supermarket'],['백화점·쇼핑몰','현대프리미엄아울렛 스페이스원',p=>['mall','department_store'].includes(p.kind)],['카페','카페',p=>p.kind==='cafe'],['관공서','행정복지센터',p=>p.kind==='townhall']]]
+];
+const jigeumPlaces={'초등학교':'다산한강초등학교','중학교':'다산한강중학교','고등학교':'가운고등학교','관공서':'다산2동행정복지센터'};
+function drawLocation(){
+  $('locationtitle').textContent=selected?selected.name+' · 가까운 시설(직선거리) 및 주변 사업':'순위 또는 추천매물에서 단지를 선택하세요';
+  if(!selected){$('locationgrid').innerHTML='';return}
+  const point=resolve(selected);
+  const near=p=>111.2*Math.hypot(p.lat-point.lat,(p.lon-point.lon)*Math.cos(point.lat*Math.PI/180));
+  $('locationgrid').innerHTML=categories.map(([title,cats])=>'<article class="mini"><h3>'+title+'</h3>'+cats.map(([label, fallback, test])=>{
+    const best=point?points.filter(test).sort((a,b)=>near(a)-near(b))[0]:null;
+    const name=best?.name||(jigeum.test(norm(selected.name))?jigeumPlaces[label]:null)||fallback;
+    const term=label==='KTX'?name:'남양주 다산동 '+name;
+    return '<p><small>'+label+'</small><a href="'+mapLink(term)+'" target="_blank" rel="noopener">'+esc(name)+'</a>'+(best?' · '+near(best).toFixed(1)+'km':' <small>지도에서 확인</small>')+'</p>';
+  }).join('')+(title==='학군'?'<p class="muted">통학구역과 실제 배정은 교육지원청 확인</p>':'')+'</article>').join('')+
+  '<article class="mini"><h3>주변 개발계획</h3><p><a href="https://buy.gh.or.kr/land/svc/board/board_list.jsp?MenuId=BRD_NOTICE%3FBoardId%3DNOTICE" target="_blank" rel="noopener">다산 지금지구 사업용지</a><small>GH 공급·입찰 공지</small></p><p><a href="https://apply.lh.or.kr/lhapply/apply/noti/an/view.do?bbsSn=7000018766&amp;ccrCnntSysDsCd=01&amp;mi=1079" target="_blank" rel="noopener">남양주 왕숙2 공공주택지구</a><small>LH 토지이용계획 및 시설 자료</small></p><p><a href="https://www.nyj.go.kr/www/contents.do?key=4838" target="_blank" rel="noopener">지금·도농 정비사업</a><small>남양주시 관련 공고 확인</small></p></article>';
+}
+async function choose(x,listing=false) {
+  selected=x;
+  const token=++selection;
+  drawRows();drawMap();drawLocation();
+  locateVisible();
+  const selectedType=x.type||type;
+  $('latest').innerHTML='<strong>'+types[selectedType]+' 최근 실거래</strong><p class="muted">불러오는 중…</p>';
+  if(listing)$('maptitle').scrollIntoView({block:'start',behavior:'smooth'});
+  try {
+    const params=new URLSearchParams({type:selectedType,start:day(today,-182),end:today});
+    if(x.id)params.set('id',x.id);
+    const result=await json('/api/trades?'+params);
+    if(token!==selection)return;
+    const rows=result.rows.filter(r=>x.id||norm(r.name)===norm(x.name)).slice(0,5);
+    $('latest').innerHTML='<strong>'+types[selectedType]+' 최근 실거래</strong>'+ (rows.length?rows.map(r=>'<p>'+esc(r.date)+' · '+r.area+'㎡ · '+esc(r.floor)+'층 <b>'+esc(price(r))+'</b></p>').join(''):'<p class="muted">최근 6개월에 일치하는 단지 거래가 없습니다.</p>');
+  }catch(e){if(token===selection)$('latest').textContent=e.message}
+}
+function drawListings(){
+  $('listings').innerHTML=[...samples,...saved].map((x,i)=>'<article class="mini"><span class="tag">'+esc(types[x.type])+' · '+(i<samples.length?'예시':'등록')+'</span><div><button class="name" data-listing="'+i+'">'+esc(x.name)+'</button></div><p><strong>'+esc(x.price)+'</strong></p><small>'+esc(x.memo)+'</small></article>').join('');
+}
+$('rank').addEventListener('click',e=>{const b=e.target.closest('[data-rank]');if(b)choose(top[b.dataset.rank])});
+$('listings').addEventListener('click',e=>{const b=e.target.closest('[data-listing]');if(b)choose([...samples,...saved][b.dataset.listing],true)});
+$('filters').addEventListener('submit',e=>{e.preventDefault();load()});
+$('area').addEventListener('change',load);
+$('reset').onclick=clearSelection;
+$('print').onclick=()=>window.print();
+$('add').onclick=()=>$('dialog').showModal();
+$('cancel').onclick=()=>$('dialog').close();
+$('newListing').addEventListener('submit',e=>{
+  e.preventDefault();
+  const x={name:$('newName').value.trim(),type:$('newType').value,price:$('newPrice').value.trim(),memo:$('newMemo').value.trim()};
+  if(!x.name||!x.price)return;
+  try {localStorage.setItem('deokja-listings',JSON.stringify([...saved,x]))}
+  catch {alert('브라우저 저장 공간을 사용할 수 없습니다.');return}
+  saved.push(x);drawListings();e.target.reset();$('dialog').close();
+});
+document.querySelectorAll('[data-span]').forEach(b=>b.onclick=()=>{dates(b.dataset.span);load()});
+document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{type=b.dataset.type;buttonGroup('[data-type]',type,'type');load()});
+for(const id of ['start','end']){$(id).max=today;$(id).onchange=()=>buttonGroup('[data-span]','','span')}
+window.addEventListener('DOMContentLoaded',()=>{
+  if(window.L){
+    map=L.map('map').setView([37.605,127.163],13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+    layer=L.layerGroup().addTo(map);
+  }else $('map').textContent='지도 모듈을 불러오지 못했습니다.';
+  json('/api/places').then(v=>{points=v;placeState=''}).catch(()=>{placeState='서비스 연결 지연'}).finally(()=>{drawMap();drawLocation();locateVisible()});
+});
+json('/api/index').then(x=>{$('reb').textContent=n(x.value);$('rebnote').textContent=x.period+' · 한국부동산원'}).catch(e=>{$('rebnote').textContent=e.message});
+drawListings();dates('month');buttonGroup('[data-type]',type,'type');load();
+</script>
+</body></html>

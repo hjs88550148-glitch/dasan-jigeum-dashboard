@@ -1,0 +1,9 @@
+{
+  "name": "deokja-dasan-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "validate": "node scripts/validate-artifact.mjs"
+  }
+}

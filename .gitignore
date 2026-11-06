@@ -1,0 +1,5 @@
+dist/
+site.tar.gz
+.openai/hosting.json
+.env
+.env.*
