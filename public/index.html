@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>덕자부동산 · 다산 지금지구 부동산 대시보드</title>
+<link rel="icon" href="logo.svg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <img src="logo.svg" alt="덕자부동산 로고" class="logo">
+    <div class="brand-text">
+      <h1>다산 지금지구 부동산 브리핑</h1>
+      <p>남양주시 다산동 아파트 실거래 · 시장지표 · 입지분석</p>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="contact">
+      <span class="office">덕자부동산</span>
+      <a class="tel" href="tel:01047033012">Tel. 010-4703-3012</a>
+    </div>
+    <button class="btn print" id="btnPrint" title="현재 화면 인쇄">🖨 인쇄</button>
+  </div>
+</header>
+
+<section class="filters" id="filters">
+  <div class="fgroup">
+    <span class="flabel">지역</span>
+    <div class="seg" id="segDong">
+      <button data-v="all" class="on">다산동 전체</button>
+      <button data-v="다산1동">다산1동</button>
+      <button data-v="다산2동">다산2동</button>
+    </div>
+    <select id="selDistrict" class="sel" title="생활권(지구) 필터">
+      <option value="all">전 생활권</option>
+      <option value="지금지구">지금지구</option>
+      <option value="진건지구">진건지구</option>
+      <option value="도농·지금 생활권(기존)">도농·지금 기존 생활권</option>
+    </select>
+  </div>
+  <div class="fgroup">
+    <span class="flabel">기간</span>
+    <div class="seg" id="segMode">
+      <button data-v="week">주간</button>
+      <button data-v="month" class="on">월간</button>
+      <button data-v="custom">직접지정</button>
+    </div>
+    <span class="dates" data-for="week"><label>기준일 <input type="date" id="inWeekEnd"></label></span>
+    <span class="dates" data-for="month"><label>월 <input type="month" id="inMonth"></label></span>
+    <span class="dates" data-for="custom"><input type="date" id="inFrom"> ~ <input type="date" id="inTo"></span>
+    <button class="btn primary" id="btnApply">조회</button>
+  </div>
+  <div class="fgroup">
+    <label class="chk"><input type="checkbox" id="chkRental"> 공공임대 단지 포함</label>
+    <span class="period-text" id="periodText"></span>
+  </div>
+</section>
+
+<div class="status" id="status" hidden></div>
+
+<section class="kpis" id="kpis"></section>
+
+<main class="layout">
+  <div class="col-left">
+    <section class="card" id="top10Card">
+      <div class="card-head">
+        <h2>다산동 아파트 Top 10</h2>
+        <div class="tabs" id="tabs">
+          <button data-v="trade" class="on">매매</button>
+          <button data-v="jeonse">전세</button>
+          <button data-v="wolse">월세</button>
+        </div>
+        <select id="selSort" class="sel"></select>
+      </div>
+      <p class="hint" id="top10Hint"></p>
+      <div class="table-wrap"><table class="rank" id="rankTable"></table></div>
+    </section>
+
+    <section class="card" id="listingCard">
+      <div class="card-head">
+        <h2>덕자부동산 추천매물</h2>
+        <button class="btn" id="btnAddListing">＋ 매물 추가</button>
+      </div>
+      <div class="listings" id="listings"></div>
+    </section>
+  </div>
+
+  <aside class="col-right">
+    <section class="card map-card">
+      <div class="card-head">
+        <h2 id="mapTitle">Top 10 단지 위치</h2>
+        <button class="btn small" id="btnShowAll">Top10 전체보기</button>
+      </div>
+      <div id="map"></div>
+      <div class="legend-map">
+        <span><i class="dot rank"></i>Top10 단지</span>
+        <span><i class="dot star"></i>추천매물</span>
+        <span><i class="dot sub"></i>역</span>
+        <span><i class="dot sch"></i>학교</span>
+        <span><i class="dot shop"></i>마트·백화점</span>
+        <span><i class="dot other"></i>기타 단지</span>
+      </div>
+    </section>
+    <section class="card" id="detailCard" hidden></section>
+  </aside>
+</main>
+
+<section class="card full" id="analysisCard" hidden></section>
+
+<section class="market">
+  <div class="sec-title">
+    <h2>시장 지표</h2>
+    <p>한국부동산원 R-ONE 주간·월간 통계 + 국토교통부 실거래 집계</p>
+  </div>
+  <div class="charts">
+    <div class="card chart"><h3>주간 아파트 매매가격지수</h3><p class="sub" id="subSale">남양주 · 경기 · 수도권</p><div class="cbox"><canvas id="cSale"></canvas></div></div>
+    <div class="card chart"><h3>주간 아파트 전세가격지수</h3><p class="sub" id="subJeonse">남양주 · 경기 · 수도권</p><div class="cbox"><canvas id="cJeonse"></canvas></div></div>
+    <div class="card chart"><h3>매매수급동향 (매수우위지수)</h3><p class="sub">100 초과 = 매수자 우위 · 경기 동부1권(남양주 포함)</p><div class="cbox"><canvas id="cDemand"></canvas></div></div>
+    <div class="card chart"><h3 id="hVol">다산동 월별 거래량</h3><p class="sub">국토교통부 실거래 신고 기준 (최근 12개월)</p><div class="cbox"><canvas id="cVol"></canvas></div></div>
+    <div class="card chart"><h3 id="hPpp">다산동 월별 평균 평당가</h3><p class="sub">전용면적 3.3㎡당, 만원</p><div class="cbox"><canvas id="cPpp"></canvas></div></div>
+    <div class="card chart"><h3>남양주시 미분양 주택</h3><p class="sub">국토교통부·한국부동산원, 월말 기준(호)</p><div class="cbox"><canvas id="cUnsold"></canvas></div></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div>
+    <strong>덕자부동산</strong> · 다산 지금지구 · 다산동 전문 · Tel. 010-4703-3012
+  </div>
+  <div class="src">
+    자료: 국토교통부 아파트 매매·전월세 실거래가(공공데이터포털), 한국부동산원 R-ONE 부동산통계, 국토교통부 브이월드(배경지도), OpenStreetMap(단지 위치·주변시설).
+    실거래는 계약 후 30일 이내 신고되므로 최근 1~4주 자료는 추가될 수 있습니다. 평당가는 전용면적 기준입니다.
+    학군은 거리 기준이며 실제 배정은 학구도를 확인하세요. 본 자료는 브리핑 참고용이며 투자 판단의 책임은 이용자에게 있습니다.
+  </div>
+  <div class="src" id="dataInfo"></div>
+  <div class="printed" id="printedAt"></div>
+</footer>
+
+<dialog id="dlgListing">
+  <form method="dialog" id="formListing">
+    <h3 id="dlgTitle">추천매물 추가</h3>
+    <div class="grid2">
+      <label>단지 <select name="aptId" id="fApt" required></select></label>
+      <label>거래유형
+        <select name="type" id="fType"><option>매매</option><option>전세</option><option>월세</option></select>
+      </label>
+      <label class="f-price">매매가/보증금 (만원) <input name="price" type="number" min="0" step="100" required placeholder="예: 85000"></label>
+      <label class="f-rent">월세 (만원) <input name="rent" type="number" min="0" step="5" placeholder="월세만 입력"></label>
+      <label>전용면적 (㎡) <input name="area" type="number" min="10" step="0.01" required placeholder="84.98"></label>
+      <label>동 / 층 <input name="floor" placeholder="105동 / 중층"></label>
+      <label class="span2">한줄 소개 <input name="title" maxlength="40" required placeholder="한강뷰 · 남향 · 올수리"></label>
+      <label class="span2">상세 설명 <textarea name="desc" rows="3" maxlength="400" placeholder="입주 가능일, 옵션, 특징 등"></textarea></label>
+      <label class="span2">태그 (쉼표로 구분) <input name="tags" placeholder="역세권, 학세권, 즉시입주"></label>
+    </div>
+    <div class="dlg-actions">
+      <button type="button" class="btn danger" id="btnDelListing" hidden>삭제</button>
+      <span class="sp"></span>
+      <button type="button" class="btn" id="btnCancel">취소</button>
+      <button type="submit" class="btn primary" id="btnSave">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

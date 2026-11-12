@@ -1,5 +1,10 @@
-dist/
-site.tar.gz
-.openai/hosting.json
-.env
-.env.*
+# API 키 — 절대 커밋 금지
+config.json
+# 키가 들어간 로컬 실시간 버전
+index-live.html
+# API 응답 캐시
+cache/
+# 로컬 도구 설정
+.claude/
+node_modules/
+*.log

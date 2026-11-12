@@ -1,0 +1,11 @@
+{
+  "port": 8787,
+  "dataGoKrKey": "YOUR_DATA_GO_KR_SERVICE_KEY",
+  "rebKey": "YOUR_REB_R-ONE_KEY",
+  "lawdCd": "41360",
+  "umdNm": "다산동",
+  "office": {
+    "name": "덕자부동산",
+    "tel": "010-4703-3012"
+  }
+}
