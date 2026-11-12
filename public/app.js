@@ -143,8 +143,8 @@ async function standalone(url, opt) {
   if (p === '/data/pois.json') return EMBED.pois;
   if (p === '/data/development.json') return EMBED.development;
   if (p === '/api/listings') {
-    if ((opt.method || 'GET') === 'PUT') { localStorage.setItem('dj-listings', opt.body); return { ok: true }; }
-    try { const s = localStorage.getItem('dj-listings'); if (s) return JSON.parse(s); } catch {}
+    // 파일(공개용) 버전은 읽기 전용: 항상 파일에 들어 있는 추천매물을 표시
+    if ((opt.method || 'GET') === 'PUT') return { ok: true };
     return EMBED.listings;
   }
   if (p === '/api/reb') {
@@ -167,10 +167,30 @@ async function standalone(url, opt) {
   }
   throw new Error('unknown ' + p);
 }
-function status(msg, err) {
+function status(msg, err, html) {
   const el = $('#status');
   if (!msg) { el.hidden = true; return; }
-  el.hidden = false; el.textContent = msg; el.classList.toggle('err', !!err);
+  el.hidden = false;
+  if (html) el.innerHTML = msg; else el.textContent = msg;
+  el.classList.toggle('err', err === true);
+  el.classList.toggle('ok', err === 'ok');
+}
+
+// 화면의 [홈페이지에 반영] → 로컬 서버가 index.html을 다시 만들어 깃허브에 업로드
+async function publishSite() {
+  if (!confirm('지금 추천매물과 최신 실거래·지수 자료를 홈페이지(깃허브)에 올릴까요?\n(1~2분 걸립니다)')) return;
+  const btn = $('#btnPublish');
+  btn.disabled = true; btn.textContent = '⏳ 올리는 중…';
+  status('홈페이지에 올리는 중입니다… 창을 닫지 말고 1~2분 기다려주세요.');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  try {
+    const r = await fetch('/api/publish', { method: 'POST', headers: { 'X-DJ-Publish': '1' } }).then((x) => x.json());
+    if (!r.ok) status(`홈페이지 반영 실패${r.step ? ' (' + r.step + ')' : ''}: ${r.error || ''}`, true);
+    else if (!r.changed) status('바뀐 내용이 없어 올릴 것이 없습니다. 홈페이지는 이미 최신입니다.', 'ok');
+    else status(`✅ 업로드 완료! 약 1분 뒤 홈페이지에 반영됩니다 → <a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a> (안 바뀌어 보이면 Ctrl+F5)`, 'ok', true);
+  } catch (e) {
+    status('홈페이지 반영 실패: ' + e.message + ' (start.bat 창이 켜져 있는지 확인하세요)', true);
+  } finally { btn.disabled = false; btn.textContent = '🌐 홈페이지에 반영'; }
 }
 
 async function loadStatic() {
@@ -781,7 +801,11 @@ function initDates() {
 (async function main() {
   initDates(); showDateInputs(); bindUI(); initMap();
   if (EMBED) {
-    $('#dataInfo').textContent = `자료 기준: 부동산원 지수·주변시설 ${EMBED.builtAt} 내장본 · 국토부 실거래 ${EMBED.liveKey ? '최근 2개월은 열 때마다 공공데이터포털에서 실시간 갱신(인터넷 필요)' : EMBED.builtAt + ' 내장본'} · 추천매물은 이 브라우저에 저장`;
+    document.body.classList.add('readonly');
+    $('#dataInfo').textContent = `자료 기준: 부동산원 지수·주변시설 ${EMBED.builtAt} · 국토부 실거래 ${EMBED.liveKey ? '최근 2개월은 열 때마다 공공데이터포털에서 실시간 갱신' : EMBED.builtAt + ' 기준'}`;
+  } else {
+    $('#btnPublish').addEventListener('click', publishSite);
+    getJSON('/api/health').then((h) => { if (h.canPublish) $('#btnPublish').hidden = false; }).catch(() => {});
   }
   try { await loadStatic(); } catch (e) { status('기본 데이터를 읽지 못했습니다: ' + e.message, true); return; }
   renderListings();

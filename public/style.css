@@ -83,6 +83,10 @@ h1, h2, h3 { margin: 0; letter-spacing: -.01em; }
 
 .status { margin: 12px 24px 0; padding: 10px 14px; border-radius: 10px; background: #fff7e6; border: 1px solid #f5d9a8; color: #7a4b00; }
 .status.err { background: #fdecec; border-color: #f5c2c2; color: #8a1c1c; }
+.status.ok { background: #e9f7ef; border-color: #b7e2c8; color: #155c35; }
+.status a { color: inherit; font-weight: 700; }
+/* 공개용(index.html)에서는 매물 편집 버튼 숨김 */
+.readonly #btnAddListing, .readonly #btnPublish, .readonly .lst .edit { display: none !important; }
 
 /* ---------- KPI ---------- */
 .kpis { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px; padding: 16px 24px 0; }

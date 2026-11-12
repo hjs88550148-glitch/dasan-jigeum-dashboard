@@ -3,6 +3,7 @@
 // - 공공데이터포털(국토교통부 실거래가) / 한국부동산원 R-ONE API 프록시 + 디스크 캐시
 // - 추천매물 저장(data/listings.json)
 import http from 'node:http';
+import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -124,6 +125,43 @@ const readBody = (req) => new Promise((ok, no) => { let b = ''; req.on('data', (
 
 const LISTINGS = path.join(ROOT, 'data/listings.json');
 
+// ---------- 홈페이지(깃허브) 반영 ----------
+// 화면의 [홈페이지에 반영] 버튼 → index.html 다시 만들기 → 깃허브에 업로드 → GitHub Pages 자동 갱신
+const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
+function isLocalRequest(req) {
+  if (!LOOPBACK.has(req.socket.remoteAddress)) return false; // 같은 PC에서 온 요청만
+  const o = req.headers.origin;
+  return !o || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o); // 다른 웹사이트에서 보낸 요청 차단
+}
+const canPublish = () => fs.existsSync(path.join(ROOT, '.git'));
+const run = (cmd, args, timeout = 300000) => new Promise((ok) => {
+  execFile(cmd, args, { cwd: ROOT, timeout, windowsHide: true, maxBuffer: 20e6 }, (err, stdout, stderr) =>
+    ok({ code: err ? (err.code ?? 1) : 0, out: (stdout + '\n' + stderr).trim() }));
+});
+let publishing = false;
+async function publish() {
+  if (!canPublish()) return { ok: false, error: '깃허브 저장소가 연결되어 있지 않습니다' };
+  if (publishing) return { ok: false, error: '이미 반영 중입니다. 잠시 후 다시 눌러주세요' };
+  publishing = true;
+  try {
+    const b = await run(process.execPath, ['scripts/build-index.mjs']);
+    if (b.code) return { ok: false, step: '파일 만들기', error: b.out.slice(-600) };
+    await run('git', ['add', 'data/listings.json', 'index.html']);
+    const diff = await run('git', ['diff', '--cached', '--quiet']);
+    if (diff.code === 0) return { ok: true, changed: false, message: '바뀐 내용이 없어 올릴 것이 없습니다' };
+    const d = new Date();
+    const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const c = await run('git', ['commit', '-m', `추천매물·자료 업데이트 ${stamp}`]);
+    if (c.code) return { ok: false, step: '저장(commit)', error: c.out.slice(-600) };
+    await run('git', ['pull', '--rebase', '-q', 'origin', 'main']);
+    const p = await run('git', ['push', 'origin', 'HEAD:main']);
+    if (p.code) return { ok: false, step: '업로드(push)', error: p.out.slice(-600) };
+    const remote = (await run('git', ['remote', 'get-url', 'origin'])).out;
+    const m = remote.match(/github\.com[/:]([^/]+)\/([^/.\s]+)/);
+    return { ok: true, changed: true, url: m ? `https://${m[1]}.github.io/${m[2]}/` : '', message: '업로드 완료' };
+  } finally { publishing = false; }
+}
+
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, 'http://x');
   try {
@@ -156,13 +194,18 @@ const server = http.createServer(async (req, res) => {
     if (u.pathname === '/api/listings') {
       if (req.method === 'GET') return send(res, 200, fs.existsSync(LISTINGS) ? fs.readFileSync(LISTINGS, 'utf8') : '[]');
       if (req.method === 'PUT') {
+        if (!isLocalRequest(req)) return send(res, 403, { error: '이 PC에서만 수정할 수 있습니다' });
         const list = JSON.parse(await readBody(req));
         if (!Array.isArray(list)) return send(res, 400, { error: 'array required' });
         fs.writeFileSync(LISTINGS, JSON.stringify(list, null, 1));
         return send(res, 200, { ok: true, count: list.length });
       }
     }
-    if (u.pathname === '/api/health') return send(res, 200, { ok: true, lawd: LAWD_CD, umd: UMD });
+    if (u.pathname === '/api/health') return send(res, 200, { ok: true, lawd: LAWD_CD, umd: UMD, canPublish: canPublish() });
+    if (u.pathname === '/api/publish' && req.method === 'POST') {
+      if (!isLocalRequest(req) || req.headers['x-dj-publish'] !== '1') return send(res, 403, { error: '이 PC에서만 실행할 수 있습니다' });
+      return send(res, 200, await publish());
+    }
 
     // 정적 파일 (public/, data/)
     let p = decodeURIComponent(u.pathname);
